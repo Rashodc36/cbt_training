@@ -1,0 +1,19 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache2 package on Debian
+    apt:
+      name: apache2
+      state: present
+      update_cache: yes
+    when: ansible_os_family == "Debian"
+
+  - name: install httpd package on RedHat/Centos
+    dnf:
+      name: httpd
+      state: present
+      update_cache: yes
+    when: ansible_os_family == "RedHat"

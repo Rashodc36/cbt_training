@@ -1,0 +1,31 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache2 package on Ubuntu/Debian
+    apt:
+      name: apache2
+      state: absent
+      update_cache: yes
+    when: ansible_os_family == "Debian"
+
+  - name: install httpd package on RedHat/Centos
+    dnf:
+      name: httpd
+      state: absent
+      update_cache: yes
+    when: ansible_os_family == "RedHat"
+
+  - name: add php support for apache on Redhat
+    dnf:
+      name: php
+      state: present
+    when: ansible_os_family == "RedHat"
+
+  - name: add php support for apache on Ubuntu
+    apt:
+      name: php
+      state: present
+    when: ansible_os_family == "Debian"
