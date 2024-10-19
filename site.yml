@@ -71,7 +71,7 @@
     when: ansible_os_family == "Debian"  
 
 #  - name: Install samba package on "Ubuntu"
-#    apt:
+#   apt:
 #      name: smbd
 #      state: latest
 #    when: ansible_distribution == "Ubuntu"
