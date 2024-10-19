@@ -4,16 +4,20 @@
   become: true
   tasks:
 
-  - name: install apache2 package on Debian
+  - name: install apache2 and php package on Debian
     apt:
-      name: apache2
-      state: present
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
       update_cache: yes
     when: ansible_os_family == "Debian"
 
-  - name: install httpd package on RedHat/Centos
+  - name: install httpd and php package on RedHat
     dnf:
-      name: httpd
+      name:
+        - httpd
+        - php
       state: present
       update_cache: yes
     when: ansible_os_family == "RedHat"
@@ -23,23 +27,4 @@
       name: httpd
       state: started
       enabled: true
-    when: ansible_os_family == "RedHat", "Centos"
-
-  - name: Start apache service on Debian
-    systemd:
-      name: apache2
-      state: started
-      enabled: true
-    when: ansible_os_family == "Debian"
-
-  - name: add php support for apache on Redhat
-    dnf:
-      name: php
-      state: present
     when: ansible_os_family == "RedHat"
-
-  - name: add php support for apache on Ubuntu
-    apt:
-      name: php
-      state: present
-    when: ansible_os_family == "Debian"

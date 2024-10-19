@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache and php
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: yes
+#Before running this condensed play, change inventory ip's to reflect the following variables:
+#10.109.31.234 apache_package=apache2 php_package=libapache2-mod-php
+#10.109.20.204 apache_package=httpd php_package=php
+#10.109.26.177 apache_package=apache2 php_package=libapache2-mod-php
+#And if you're going to run an httpd server, you need to create a start play for the server
