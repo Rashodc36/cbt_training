@@ -18,7 +18,7 @@
       update_cache: yes
     when: ansible_distribution == "Debian"
 
-- hosts: file_servers
+- hosts: web_servers
   become: true
   tasks:
 
@@ -38,7 +38,7 @@
       enabled: true
     when: ansible_os_family == "RedHat"
 
-- hosts: file_servers
+- hosts: db_servers
   become: true
   tasks:
 
