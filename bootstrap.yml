@@ -1,0 +1,44 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install updates (RedHat)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+  - name: install updates (Debian)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Debian"
+
+- hosts: all
+  become: true
+  tasks: 
+
+  - name: create cooter user
+    tags: always
+    user:
+      name: cooter
+      groups: root
+
+  - name: add ssh key for cooter
+    tags: always
+    authorized_key: 
+      user: cooter
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJVH2KSmiqytL9+jvjJnbtsKPXTKwLsZjXqLx/dVSZ/O ansible"
+
+  - name: add sudoers file nfor cooter
+    tags: always
+    copy:
+      src: sudoer_cooter
+      dest: /etc/sudoers.d/cooter
+      owner: root
+      group: root
+      mode: 0440

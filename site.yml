@@ -4,19 +4,84 @@
   become: true
   tasks:
 
-  - name: install updates (RedHat)
+  - name: update repo cache (RedHat)
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "RedHat"
 
-  - name: install updates (Debian)
+  - name: update repo cache (Debian)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Debian"
+
+- hosts: all
+  become: true
+  tasks: 
+
+  - name: add ssh key for cooter
+    tags: always
+    authorized_key: 
+      user: cooter
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJVH2KSmiqytL9+jvjJnbtsKPXTKwLsZjXqLx/dVSZ/O ansible"
+
+  - name: add sudoers file nfor cooter
+    tags: always
+    copy:
+      src: sudoer_cooter
+      dest: /etc/sudoers.d/cooter
+      owner: root
+      group: root
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: install unzip
+    package:
+      name: unzip
+
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root  
+
+  - name: Install samba package on "RedHat"
+    dnf:
+      name: samba
+      state: latest
+    when: ansible_distribution == "RedHat"
+
+  - name: install apache  and php for RedHat servers
+    tags: apache,centos,httpd
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "RedHat"
+
+  - name: change e-mail address for admin
+    tags: httpd,redhat,email
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "RedHat"
+    register: httpd
+
+  - name: restart httpd (RedHat)
+    tags: restarthttpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
 
 - hosts: web_servers
   become: true
