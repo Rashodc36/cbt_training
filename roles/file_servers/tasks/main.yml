@@ -1,0 +1,8 @@
+- name: install apache2 and php for Debian servers
+  tags: samba,file_servers
+  apt:
+    name:
+      - apache2
+      - samba
+    state: latest
+  when: ansible_os_family == "Debian"  

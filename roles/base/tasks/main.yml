@@ -1,0 +1,5 @@
+- name: add ssh key for cooter
+  authorized_key: 
+    user: cooter
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJVH2KSmiqytL9+jvjJnbtsKPXTKwLsZjXqLx/dVSZ/O ansible"
+

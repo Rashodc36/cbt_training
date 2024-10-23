@@ -1,0 +1,15 @@
+- name: install apache  and php for RedHat servers
+  tags: apache,centos,httpd
+  dnf:
+    name:
+      - httpd
+      - php
+    state: latest
+  when: ansible_distribution == "RedHat"
+
+- name: Start apache service on RedHat
+  systemd:
+    name: httpd
+    state: started
+    enabled: true
+  when: ansible_os_family == "RedHat"
