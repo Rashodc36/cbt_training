@@ -1,15 +1,32 @@
 - name: install apache  and php for RedHat servers
   tags: apache,centos,httpd
-  dnf:
+  package:
     name:
-      - httpd
-      - php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
-  when: ansible_distribution == "RedHat"
 
-- name: Start apache service on RedHat
-  systemd:
-    name: httpd
+- name: Start and enable apache service on RedHat
+  tags: apache,httpd
+  service:
+    name: "{{ apache_service }}"
     state: started
     enabled: true
-  when: ansible_os_family == "RedHat"
+
+- name: change e-mail address for admin
+  tags: apache,centos,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin somebody@somewhere.com
+  when: ansible_distribution == "RedHat"
+  notify: restart_apache
+
+- name: copy html file for site
+  tags: apache,apache2,httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
